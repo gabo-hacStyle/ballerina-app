@@ -9,9 +9,21 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.groovyballerina.mqtt.MqttDataListener;
+import com.example.groovyballerina.mqtt.MqttManager;
+
+import org.eclipse.paho.client.mqttv3.MqttClient;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
 
-    private MQTTManager mqttManager;
+    private MqttManager mqttManager;
+    private MqttClient mqttClient;
+    private DataUpdater dataUpdater;
+    private TextView textView1;
+    //private TextView textView2;
 
     TextView lblconectado;
     @Override
@@ -25,14 +37,31 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        textView1 = findViewById(R.id.textFloat);
 
+
+
+
+        Map<String, TextView> textViews = new HashMap<>();
+        textViews.put("lorawan/temp", textView1);
+
+
+        dataUpdater = new DataUpdater(textViews);
+        mqttManager = new MqttManager(
+                this,
+                "tcp://10.3.141.1:8883", // Replace
+                mqttClient.generateClientId(),// Replace
+                dataUpdater);
 
         // 🚀 Inicializar e iniciar MQTT
-        mqttManager = new MQTTManager(this);
-        mqttManager.connect();
+        mqttManager.connect("ballerina-client", "ballerina1234@");
 
         // Suscribirse y publicar ejemplo (puedes cambiar el topic y el mensaje)
         mqttManager.subscribe("lorawan/temp");
-        mqttManager.publish("test/topic", "¡Hola desde GroovyBallerina!");
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mqttManager.disconnect();
     }
 }

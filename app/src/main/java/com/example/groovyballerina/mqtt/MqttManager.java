@@ -19,10 +19,11 @@ public class MqttManager {
     private static final String TAG = "MqttManager";
     private MqttClient mqttClient;
     private MqttDataListener listener;
+    private Context context;
 
 
     public MqttManager(Context context, String serverUri, String clientId, MqttDataListener listener) {
-
+        this.context = context;
         this.listener = listener;
         try {
             MemoryPersistence persistence = new MemoryPersistence();
@@ -44,25 +45,10 @@ public class MqttManager {
             mqttConnectOptions.setCleanSession(false);
             mqttConnectOptions.setUserName(username);
             mqttConnectOptions.setPassword(pass.toCharArray());
+            mqttConnectOptions.setKeepAliveInterval(60);
 
             mqttClient.connect(mqttConnectOptions);
             Log.d(TAG, "Connection success");
-
-
-        } catch (MqttException e) {
-        Log.d(TAG, "Connection failure: " + e.getMessage());
-        e.printStackTrace();
-    }
-    }
-
-    public void subscribe(String topic, int qos) {
-        if (mqttClient == null) {
-            Log.e(TAG, "MqttClient is null. Cannot subscribe.");
-            return;
-        }
-        try {
-            mqttClient.subscribe(topic, qos);
-            Log.d(TAG, "Subscribed to topic: " + topic);
 
             mqttClient.setCallback(new MqttCallback() {
                 @Override
@@ -71,16 +57,22 @@ public class MqttManager {
                 }
 
                 @Override
-                public void messageArrived(String topic, MqttMessage message) {
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+                    //This is executed when a message arrive.
                     String payload = new String(message.getPayload());
-                    if (payload != null) {
-                        try {
-                            float floatValue = Float.parseFloat(payload);
-                            listener.onDataReceived(topic, floatValue);
-                        } catch (Exception e) {
-                            Log.d(TAG, "Invalid message format: " + e.getMessage());
+                    Log.d(TAG,"Message Recived: "+ payload);
+                    if(!topic.equals("lorawan/temp/now")){
+                        if (payload != null) {
+                            try {
+                                float floatValue = Float.parseFloat(payload);
+                                listener.onDataReceived(topic, floatValue);
+                            } catch (Exception e) {
+                                Log.e(TAG, "Invalid message format: " + e.getMessage());
+                            }
                         }
                     }
+
+
                 }
 
                 @Override
@@ -88,16 +80,42 @@ public class MqttManager {
                     Log.d(TAG, "Delivery complete");
                 }
             });
+
         } catch (MqttException e) {
-            Log.d(TAG, "Subscription exception: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-
-
-
+        Log.d(TAG, "Connection failure: " + e.getMessage());
+        e.printStackTrace();
+    }
     }
 
+    public void subscribe(String topic) {
+        if (mqttClient == null) {
+            Log.e(TAG, "MqttClient is null. Cannot subscribe.");
+            return;
+        }
+        try {
+            mqttClient.subscribe(topic, 1);
+            Log.d(TAG, "Subscribed to topic: " + topic);
+        } catch (MqttException e) {
+            Log.e(TAG, "Subscription exception: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void publish(String topic, String message) {
+        if (mqttClient == null) {
+            Log.e(TAG, "MqttClient is null. Cannot publish.");
+            return;
+        }
+        try {
+            MqttMessage mqttMessage = new MqttMessage(message.getBytes());
+            mqttMessage.setQos(1); // You can adjust the QoS if needed
+            mqttClient.publish(topic, mqttMessage);
+            Log.d(TAG, "Published message: " + message + " to topic: " + topic);
+        } catch (MqttException e) {
+            Log.e(TAG, "Publish exception: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
     public void disconnect() {
         if (mqttClient == null) {
             Log.e(TAG, "MqttClient is null. Cannot disconnect.");
@@ -111,7 +129,5 @@ public class MqttManager {
             e.printStackTrace();
         }
     }
-    public void subscribe(String topic){
-        subscribe(topic,1);
-    }
+
 }

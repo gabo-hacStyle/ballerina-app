@@ -102,12 +102,11 @@
 
                         <ProgressBar
                             android:id="@+id/progressBar"
-                            style="?android:attr/progressBarStyle"
-                            android:layout_width="110dp"
-                            android:layout_height="110dp"
-                            android:layout_marginTop="6dp"
-                            android:progress="2"
-                            android:progressTint="#D52C2C" />
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:max="39"
+                            android:progress="0" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -163,7 +162,7 @@
                     app:layout_constraintTop_toBottomOf="@id/appbar" />
 
                 <Button
-                    android:id="@+id/button"
+                    android:id="@+id/btnsenddata"
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"

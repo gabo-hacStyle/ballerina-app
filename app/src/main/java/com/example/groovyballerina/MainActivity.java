@@ -1,5 +1,6 @@
 package com.example.groovyballerina;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private long timeLeft = COUNTDOWN_TIME;
     private CountDownTimer countDownTimer;
     private Button btnsenddata;
+    private Button btnVerGrafica;
 
     TextView lblconectado;
     @Override
@@ -55,12 +57,16 @@ public class MainActivity extends AppCompatActivity {
         label1 = findViewById(R.id.label1);
         label2 = findViewById(R.id.label2);
         btnsenddata = findViewById(R.id.btnsenddata);
+        btnVerGrafica = findViewById(R.id.btnVerGrafica);
 
 
-
-
-
-
+        btnVerGrafica.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, GraphActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         Map<String, TextView> textViews = new HashMap<>();
@@ -121,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }.start();
     }
+
 
     public void resetCountdown(){
         timeLeft = COUNTDOWN_TIME;

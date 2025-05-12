@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -40,8 +43,10 @@ public class MainActivity extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private Button btnsenddataOx;
 
+    private Spinner spinnerOptions;
+    private ImageView btnSearch;
+
     private Button btnsenddataTemp;
-    private Button btnVerGrafica;
 
     TextView lblconectado;
     @Override
@@ -64,15 +69,28 @@ public class MainActivity extends AppCompatActivity {
         btnsenddataTemp = findViewById(R.id.btnsenddata2);
        // btnVerGrafica = findViewById(R.id.btnVerGrafica);
         labelDebugger = findViewById(R.id.connectedLabel);
+        btnSearch = findViewById(R.id.btnSearch);
+        spinnerOptions = findViewById(R.id.spinnerOptions);
+
+        // Configuración del Spinner
+        String[] items = {"12 horas","1 dia", "Hace 3 dias", "Hace 7 dias", "Ultimo mes", "Ultimo semestre", "Ultimo año"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerOptions.setAdapter(adapter);
+
+        // Configuración del botón de búsqueda
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String selectedRange = spinnerOptions.getSelectedItem().toString();
+
+                Intent intent = new Intent(MainActivity.this, GraphActivity.class);
+                intent.putExtra("time_Range", selectedRange);
+                startActivity(intent);
+            }
+        });
 
 
-//        btnVerGrafica.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, GraphActivity.class);
-//                startActivity(intent);
-//            }
-//        });
 
 
         Map<String, TextView> textViews = new HashMap<>();
@@ -114,6 +132,9 @@ public class MainActivity extends AppCompatActivity {
 
 //        startCountdown();
    }
+
+    
+
 //   @Override
 //    protected void onDestroy() {
 //        super.onDestroy();

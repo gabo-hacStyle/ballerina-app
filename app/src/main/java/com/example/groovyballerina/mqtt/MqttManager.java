@@ -2,6 +2,7 @@ package com.example.groovyballerina.mqtt;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.TextView;
 
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -21,10 +22,13 @@ public class MqttManager {
     private MqttDataListener listener;
     private Context context;
 
+    private TextView debugStatusLabel;
 
-    public MqttManager(Context context, String serverUri, String clientId, MqttDataListener listener) {
+    public MqttManager(Context context, String serverUri, String clientId, MqttDataListener listener, TextView debugStatusLabel) {
         this.context = context;
         this.listener = listener;
+        this.debugStatusLabel = debugStatusLabel;
+
         try {
             MemoryPersistence persistence = new MemoryPersistence();
             mqttClient = new MqttClient(serverUri, clientId, persistence);
@@ -49,6 +53,7 @@ public class MqttManager {
 
             mqttClient.connect(mqttConnectOptions);
             Log.d(TAG, "Connection success");
+            debugStatusLabel.setText("Connection success");
 
             mqttClient.setCallback(new MqttCallback() {
                 @Override

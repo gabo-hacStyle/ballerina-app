@@ -29,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private MqttClient mqttClient;
     private DataUpdater dataUpdater;
     private TextView textView1;
-    //private TextView textView2;
+    private TextView textView2;
+    private TextView labelDebugger;
     private ProgressBar progressBar;
     private TextView label1;
     private TextView label2;
@@ -37,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private static final long COUNTDOWN_INTERVAL = 1000; // 1 second interval
     private long timeLeft = COUNTDOWN_TIME;
     private CountDownTimer countDownTimer;
-    private Button btnsenddata;
+    private Button btnsenddataOx;
+
+    private Button btnsenddataTemp;
     private Button btnVerGrafica;
 
     TextView lblconectado;
@@ -53,24 +56,28 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         textView1 = findViewById(R.id.textFloat);
-        progressBar = findViewById(R.id.progressBar);
-        label1 = findViewById(R.id.label1);
-        label2 = findViewById(R.id.label2);
-        btnsenddata = findViewById(R.id.btnsenddata);
-        btnVerGrafica = findViewById(R.id.btnVerGrafica);
+        textView2 = findViewById(R.id.textFloat2);
+        //progressBar = findViewById(R.id.progressBar);
+        //label1 = findViewById(R.id.label1);
+        //label2 = findViewById(R.id.label2);
+        btnsenddataOx = findViewById(R.id.btnsenddata);
+        btnsenddataTemp = findViewById(R.id.btnsenddata2);
+       // btnVerGrafica = findViewById(R.id.btnVerGrafica);
+        labelDebugger = findViewById(R.id.connectedLabel);
 
 
-        btnVerGrafica.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, GraphActivity.class);
-                startActivity(intent);
-            }
-        });
+//        btnVerGrafica.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, GraphActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
 
         Map<String, TextView> textViews = new HashMap<>();
-        textViews.put("lorawan/temp", textView1);
+        textViews.put("lorawan/ox", textView1);
+        textViews.put("lorawan/temp", textView2);
 
 
         dataUpdater = new DataUpdater(textViews, progressBar, this);
@@ -78,71 +85,81 @@ public class MainActivity extends AppCompatActivity {
                 this,
                 "tcp://10.3.141.1:8883", // Replace
                 mqttClient.generateClientId(),// Replace
-                dataUpdater);
+                dataUpdater, labelDebugger);
 
         // 🚀 Inicializar e iniciar MQTT
         mqttManager.connect("ballerina-client", "ballerina1234@");
+        labelDebugger.setText("Conectando...");
 
         // Suscribirse
         mqttManager.subscribe("lorawan/temp");
         mqttManager.subscribe("lorawan/temp/now");
+        mqttManager.subscribe("lorawan/ox");
 
         // Set a click listener for the publish button
-        btnsenddata.setOnClickListener(new View.OnClickListener() {
+        btnsenddataTemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mqttManager.publish("lorawan/temp/now", "leer temperatura");
             }
         });
 
-        startCountdown();
+        btnsenddataOx.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mqttManager.publish("lorawan/ox/now", "leer oxigeno");
+            }
+        });
+
+
+//        startCountdown();
    }
-   @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mqttManager.disconnect();
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
-    }
-
-    private void startCountdown() {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
-        countDownTimer = new CountDownTimer(timeLeft, COUNTDOWN_INTERVAL) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                timeLeft = millisUntilFinished;
-                updateCountdownText();
-            }
-
-            @Override
-            public void onFinish() {
-                // Handle the next reading
-                label1.setText("Dato tomado hace: 5 mins");
-                timeLeft = COUNTDOWN_TIME;
-                updateCountdownText();
-                startCountdown();
-            }
-        }.start();
-    }
-
-
-    public void resetCountdown(){
-        timeLeft = COUNTDOWN_TIME;
-        startCountdown();
-        updateLastDataLabel();
-    }
-
-    public void updateCountdownText() {
-        int minutes = (int) (timeLeft / 1000) / 60;
-        int seconds = (int) (timeLeft / 1000) % 60;
-        String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
-        label2.setText("Nueva lectura en: " + minutes + "mins");
-    }
-
-    public void updateLastDataLabel(){
-        label1.setText("Dato tomado hace: 0 mins");
-    }
+//   @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        mqttManager.disconnect();
+//        if (countDownTimer != null) {
+//            countDownTimer.cancel();
+//        }
+//    }
+//
+//    private void startCountdown() {
+//        if (countDownTimer != null) {
+//            countDownTimer.cancel();
+//        }
+//        countDownTimer = new CountDownTimer(timeLeft, COUNTDOWN_INTERVAL) {
+//            @Override
+//            public void onTick(long millisUntilFinished) {
+//                timeLeft = millisUntilFinished;
+//                updateCountdownText();
+//            }
+//
+//            @Override
+//            public void onFinish() {
+//                // Handle the next reading
+//                label1.setText("Dato tomado hace: 5 mins");
+//                timeLeft = COUNTDOWN_TIME;
+//                updateCountdownText();
+//                startCountdown();
+//            }
+//        }.start();
+//    }
+//
+//
+//    public void resetCountdown(){
+//        timeLeft = COUNTDOWN_TIME;
+//        startCountdown();
+//        updateLastDataLabel();
+//    }
+//
+//    public void updateCountdownText() {
+//        int minutes = (int) (timeLeft / 1000) / 60;
+//        int seconds = (int) (timeLeft / 1000) % 60;
+//        String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+//        label2.setText("Nueva lectura en: " + minutes + "mins");
+//    }
+//
+//    public void updateLastDataLabel(){
+//        label1.setText("Dato tomado hace: 0 mins");
+//    }
 }

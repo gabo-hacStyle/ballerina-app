@@ -19,3 +19,14 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+# Mantener las clases de MQTT
+-keep class org.eclipse.paho.client.mqttv3.** { *; }
+-keep class org.eclipse.paho.android.service.** { *; }
+
+# Evitar la eliminación de métodos internos usados por la librería
+-dontwarn org.eclipse.paho.client.mqttv3.**
+-dontwarn org.eclipse.paho.android.service.**
+
+# Mantener clases relacionadas con la conexión y sockets
+-keep class javax.net.** { *; }
+-keep class java.net.** { *; }

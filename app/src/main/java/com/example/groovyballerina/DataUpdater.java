@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.example.groovyballerina.mqtt.MqttDataListener;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class DataUpdater implements MqttDataListener {
 
@@ -30,43 +31,48 @@ public class DataUpdater implements MqttDataListener {
     @Override
     public void onDataReceived(String topic, Float data) {
         Log.d("DataUpdater", "Received data: " + data + " from topic: " + topic);
+
+        Log.d("DataUpdater", "Received data: " + data + " from topic: " + topic);
         TextView textView = textViews.get(topic);
+        if(topic.equals("lorawan/ox")) {
+            data = data / 1000;
+        }
         if (textView != null) {
             textView.setText(String.valueOf(data));
         }
 
 
-        mainActivity.resetCountdown();
+        //mainActivity.resetCountdown();
 
-        updateGauge(data);
+//        updateGauge(data);
 
     }
 
-    private void updateGauge(float data) {
-        // Calculate the percentage
-        float percentage = (data / MAX_VALUE) * 100.0f;
-        if (percentage<0){
-            percentage=0;
-        }
-        if (percentage>100){
-            percentage=100;
-        }
-        // Update the progress bar
-        progressBar.setProgress((int) percentage);
-        // Update the color
-        updateGaugeColor(percentage);
-    }
+//    private void updateGauge(float data) {
+//        // Calculate the percentage
+//        float percentage = (data / MAX_VALUE) * 100.0f;
+//        if (percentage<0){
+//            percentage=0;
+//        }
+//        if (percentage>100){
+//            percentage=100;
+//        }
+//        // Update the progress bar
+//        progressBar.setProgress((int) percentage);
+//        // Update the color
+//        updateGaugeColor(percentage);
+//    }
 
-    private void updateGaugeColor(float percentage) {
-        int color;
-        if (percentage < THRESHOLD_RED) {
-            color = Color.RED;
-        } else if (percentage < THRESHOLD_YELLOW) {
-            color = Color.YELLOW;
-        } else {
-            color = Color.GREEN;
-        }
-        progressBar.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
-    }
+//    private void updateGaugeColor(float percentage) {
+//        int color;
+//        if (percentage < THRESHOLD_RED) {
+//            color = Color.RED;
+//        } else if (percentage < THRESHOLD_YELLOW) {
+//            color = Color.YELLOW;
+//        } else {
+//            color = Color.GREEN;
+//        }
+//        progressBar.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+//    }
 
 }

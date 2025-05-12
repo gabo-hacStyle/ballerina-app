@@ -58,7 +58,7 @@
                     android:orientation="horizontal">
 
                     <Spinner
-                        android:id="@+id/spinner"
+                        android:id="@+id/spinnerOptions"
                         android:layout_width="278dp"
                         android:layout_height="100px"
                         android:layout_marginTop="34dp"
@@ -66,10 +66,10 @@
                         android:orientation="vertical"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/spinner" />
+                        app:layout_constraintTop_toBottomOf="@id/spinnerOptions" />
 
                     <ImageView
-                        android:id="@+id/imageView"
+                        android:id="@+id/btnSearch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="34dp"
@@ -92,7 +92,7 @@
                     app:cardElevation="4dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner">
+                    app:layout_constraintTop_toBottomOf="@id/spinnerOptions">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -170,19 +170,6 @@
 
                     android:background="@android:color/holo_blue_bright"
                     android:text="Tomar medida"
-                    android:textColor="@android:color/white"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/appbar" />
-
-                <Button
-                    android:id="@+id/btnVerGrafica"
-                    android:layout_width="190dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="16dp"
-                    android:text="Ver gráfica"
-
                     android:textColor="@android:color/white"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

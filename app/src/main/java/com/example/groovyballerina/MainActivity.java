@@ -4,8 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -38,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
     private long timeLeft = COUNTDOWN_TIME;
     private CountDownTimer countDownTimer;
     private Button btnsenddata;
-    private Button btnVerGrafica;
+    private ImageView btnSearch;
+    private Spinner spinnerOptions;
+
 
     TextView lblconectado;
     @Override
@@ -57,13 +63,25 @@ public class MainActivity extends AppCompatActivity {
         label1 = findViewById(R.id.label1);
         label2 = findViewById(R.id.label2);
         btnsenddata = findViewById(R.id.btnsenddata);
-        btnVerGrafica = findViewById(R.id.btnVerGrafica);
+        btnSearch = findViewById(R.id.btnSearch);
+        spinnerOptions = findViewById(R.id.spinnerOptions);
 
 
-        btnVerGrafica.setOnClickListener(new View.OnClickListener() {
+        // Configuración del Spinner
+        String[] items = {"Hace 24 horas", "Hace 3 dias", "Hace 7 dias"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerOptions.setAdapter(adapter);
+
+
+        // Configuración del botón de búsqueda
+        btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String selectedRange = spinnerOptions.getSelectedItem().toString();
+
                 Intent intent = new Intent(MainActivity.this, GraphActivity.class);
+                intent.putExtra("time_Range", selectedRange);
                 startActivity(intent);
             }
         });
